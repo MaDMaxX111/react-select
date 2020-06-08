@@ -1867,6 +1867,9 @@ var Select$1 = function (_React$Component) {
 					this.props.backspaceToRemoveMessage.replace('{label}', valueArray[valueArray.length - 1][this.props.labelKey])
 				);
 			}
+			var ValuesWrapperRenderer = function ValuesWrapperRenderer(props) {
+				return _this9.props.valuesWrapperRenderer ? _this9.props.valuesWrapperRenderer(props) : React__default.createElement('div', props);
+			};
 
 			return React__default.createElement(
 				'div',
@@ -1890,7 +1893,7 @@ var Select$1 = function (_React$Component) {
 						style: this.props.style
 					},
 					React__default.createElement(
-						'div',
+						ValuesWrapperRenderer,
 						{ className: 'Select-multi-value-wrapper', id: this._instancePrefix + '-value' },
 						this.renderValue(valueArray, isOpen),
 						this.renderInput(valueArray, focusedOptionIndex)
@@ -1983,7 +1986,8 @@ Select$1.propTypes = {
 	valueComponent: PropTypes.func, // value component to render
 	valueKey: PropTypes.string, // path of the label value in option objects
 	valueRenderer: PropTypes.func, // valueRenderer: function (option) {}
-	wrapperStyle: PropTypes.object // optional style to apply to the component wrapper
+	wrapperStyle: PropTypes.object, // optional style to apply to the component wrapper
+	valuesWrapperRenderer: PropTypes.func // custom values wrapper component
 };
 
 Select$1.defaultProps = {

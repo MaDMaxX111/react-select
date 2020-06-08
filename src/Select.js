@@ -1155,6 +1155,7 @@ class Select extends React.Component {
 				</span>
 			);
 		}
+		const ValuesWrapperRenderer = (props) => this.props.valuesWrapperRenderer ? this.props.valuesWrapperRenderer(props) : <div {...props} />
 
 		return (
 			<div ref={ref => this.wrapper = ref}
@@ -1170,10 +1171,10 @@ class Select extends React.Component {
 					onTouchStart={this.handleTouchStart}
 					style={this.props.style}
 				>
-					<div className="Select-multi-value-wrapper" id={`${this._instancePrefix}-value`}>
+					<ValuesWrapperRenderer className="Select-multi-value-wrapper" id={`${this._instancePrefix}-value`}>
 						{this.renderValue(valueArray, isOpen)}
 						{this.renderInput(valueArray, focusedOptionIndex)}
-					</div>
+					</ValuesWrapperRenderer>
 					{removeMessage}
 					{this.renderLoading()}
 					{this.renderClear()}
@@ -1262,6 +1263,7 @@ Select.propTypes = {
 	valueKey: PropTypes.string,           // path of the label value in option objects
 	valueRenderer: PropTypes.func,        // valueRenderer: function (option) {}
 	wrapperStyle: PropTypes.object,       // optional style to apply to the component wrapper
+	valuesWrapperRenderer: PropTypes.func,        // custom values wrapper component
 };
 
 Select.defaultProps = {
