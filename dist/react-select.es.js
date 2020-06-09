@@ -1939,7 +1939,6 @@ var Select$1 = function (_React$Component) {
 				return React.createElement('div', p);
 			};
 			var propsWrapComponent = {
-				key: _.uniqueId(),
 				id: this._instancePrefix + '-value',
 				className: 'Select-multi-value-wrapper'
 			};
@@ -1961,7 +1960,9 @@ var Select$1 = function (_React$Component) {
 						var valueArray = _this9.getValueArray(_this9.props.value);
 						valueArray.splice(oldIndex, 1);
 						_this9.setValue(_.uniqWith([].concat(toConsumableArray(valueArray)), _.isEqual));
-					}
+					},
+					draggable: '.Select-value',
+					filter: '.Select-input'
 				};
 				propsWrapComponent.onChange = function (order, sortable, evt) {
 					var newIndex = evt.newIndex,

@@ -1171,7 +1171,6 @@ class Select extends React.Component {
 		// wrap values
 		const ValueWrapComponent = this.props.sortableValues ? Sortable : p => <div {...p} />;
 		const propsWrapComponent = {
-			key: _.uniqueId(),
 			id: `${this._instancePrefix}-value`,
 			className: 'Select-multi-value-wrapper',
 		};
@@ -1190,7 +1189,9 @@ class Select extends React.Component {
 					const valueArray = this.getValueArray(this.props.value);
 					valueArray.splice(oldIndex, 1);
 					this.setValue(_.uniqWith([...valueArray], _.isEqual));
-				}
+				},
+				draggable: '.Select-value',
+				filter: '.Select-input',
 			};
 			propsWrapComponent.onChange = (order, sortable, evt) => {
 				const { newIndex, oldIndex, from, to } = evt;
