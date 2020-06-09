@@ -1186,7 +1186,7 @@ class Select extends React.Component {
 					this.setValue(_.uniqWith([...valueArray], _.isEqual));
 				},
 				onRemove: (evt) => {
-					const { newIndex } = evt;
+					const { oldIndex } = evt;
 					const valueArray = this.getValueArray(this.props.value);
 					valueArray.splice(newIndex, 1);
 					this.setValue(_.uniqWith([...valueArray], _.isEqual));
