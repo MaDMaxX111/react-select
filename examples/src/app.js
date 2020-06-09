@@ -2,7 +2,6 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Select from 'react-select';
 import './example.less';
 
 import Creatable from './components/Creatable';
@@ -18,8 +17,9 @@ import States from './components/States';
 
 ReactDOM.render(
 	<div>
-		<States label="States" searchable />
 		<Multiselect label="Multiselect" />
+		<Multiselect label="Multiselect" />
+		<States label="States" searchable />
 		<Virtualized label="Virtualized" />
 		<Contributors label="Contributors (Async)" />
 		<GithubUsers label="GitHub users (Async with fetch.js)" />

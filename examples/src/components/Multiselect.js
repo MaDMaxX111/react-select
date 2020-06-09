@@ -52,19 +52,19 @@ var MultiSelectField = createClass({
 			<div className="section">
 				<h3 className="section-heading">{this.props.label} <a href="https://github.com/JedWatson/react-select/tree/v1.x/examples/src/components/Multiselect.js">(Source)</a></h3>
 				<Select
-					valuesWrapperRenderer={(p) => <span {...p} />}
+					sortableGroup={'group'}
+					sortableValues={true}
 					closeOnSelect={!stayOpen}
 					disabled={disabled}
 					multi
 					onChange={this.handleSelectChange}
 					options={options}
 					placeholder="Select your favourite(s)"
-          removeSelected={this.state.removeSelected}
+          			removeSelected={this.state.removeSelected}
 					rtl={this.state.rtl}
 					simpleValue
 					value={value}
 				/>
-
 				<div className="checkbox-list">
 					<label className="checkbox">
 						<input type="checkbox" className="checkbox-control" name="removeSelected" checked={this.state.removeSelected} onChange={this.toggleCheckbox} />

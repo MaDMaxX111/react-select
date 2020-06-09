@@ -3,6 +3,8 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
+import Sortable from 'react-sortablejs';
+import _ from 'lodash';
 
 var arrowRenderer = function arrowRenderer(_ref) {
 	var onMouseDown = _ref.onMouseDown;
@@ -407,6 +409,70 @@ var possibleConstructorReturn = function (self, call) {
   return call && (typeof call === "object" || typeof call === "function") ? call : self;
 };
 
+
+
+
+
+var slicedToArray = function () {
+  function sliceIterator(arr, i) {
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _e = undefined;
+
+    try {
+      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);
+
+        if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;
+      _e = err;
+    } finally {
+      try {
+        if (!_n && _i["return"]) _i["return"]();
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+
+    return _arr;
+  }
+
+  return function (arr, i) {
+    if (Array.isArray(arr)) {
+      return arr;
+    } else if (Symbol.iterator in Object(arr)) {
+      return sliceIterator(arr, i);
+    } else {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance");
+    }
+  };
+}();
+
+
+
+
+
+
+
+
+
+
+
+
+
+var toConsumableArray = function (arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+    return arr2;
+  } else {
+    return Array.from(arr);
+  }
+};
+
 var Option = function (_React$Component) {
 	inherits(Option, _React$Component);
 
@@ -615,7 +681,7 @@ var Value = function (_React$Component) {
 		value: function render() {
 			return React.createElement(
 				'div',
-				{ className: classNames('Select-value', this.props.value.disabled ? 'Select-value-disabled' : '', this.props.value.className),
+				{ 'data-value': JSON.stringify(this.props.value), className: classNames('Select-value', this.props.value.disabled ? 'Select-value-disabled' : '', this.props.value.className),
 					style: this.props.value.style,
 					title: this.props.value.title
 				},
@@ -884,7 +950,7 @@ var Select$1 = function (_React$Component) {
 		value: function handleMouseDown(event) {
 			// if the event was triggered by a mousedown and not the primary
 			// button, or if the component is disabled, ignore it.
-			if (this.props.disabled || event.type === 'mousedown' && event.button !== 0) {
+			if (this.props.disabled || event.type === 'mousedown' && event.button !== 0 || event.target.closest('.Select-value')) {
 				return;
 			}
 
@@ -1526,7 +1592,8 @@ var Select$1 = function (_React$Component) {
 							onRemove: _this5.removeValue,
 							placeholder: _this5.props.placeholder,
 							value: value,
-							values: valueArray
+							values: valueArray,
+							'data-id': _this5._instancePrefix + '-value-' + i
 						},
 						renderLabel(value, i),
 						React.createElement(
@@ -1630,7 +1697,9 @@ var Select$1 = function (_React$Component) {
 		key: 'renderClear',
 		value: function renderClear() {
 			var valueArray = this.getValueArray(this.props.value);
-			if (!this.props.clearable || !valueArray.length || this.props.disabled || this.props.isLoading) return;
+			if (!this.props.clearable || !valueArray.length || this.props.disabled || this.props.isLoading) {
+				return;
+			}
 			var ariaLabel = this.props.multi ? this.props.clearAllText : this.props.clearValueText;
 			var clear = this.props.clearRenderer();
 
@@ -1804,7 +1873,8 @@ var Select$1 = function (_React$Component) {
 				'div',
 				{ ref: function ref(_ref5) {
 						return _this8.menuContainer = _ref5;
-					}, className: 'Select-menu-outer', style: this.props.menuContainerStyle },
+					}, className: 'Select-menu-outer',
+					style: this.props.menuContainerStyle },
 				React.createElement(
 					'div',
 					{
@@ -1858,14 +1928,60 @@ var Select$1 = function (_React$Component) {
 			if (this.props.multi && !this.props.disabled && valueArray.length && !this.state.inputValue && this.state.isFocused && this.props.backspaceRemoves) {
 				removeMessage = React.createElement(
 					'span',
-					{ id: this._instancePrefix + '-backspace-remove-message', className: 'Select-aria-only', 'aria-live': 'assertive' },
+					{ id: this._instancePrefix + '-backspace-remove-message', className: 'Select-aria-only',
+						'aria-live': 'assertive' },
 					this.props.backspaceToRemoveMessage.replace('{label}', valueArray[valueArray.length - 1][this.props.labelKey])
 				);
 			}
-			var ValuesWrapperRenderer = function ValuesWrapperRenderer(props) {
-				return _this9.props.valuesWrapperRenderer ? _this9.props.valuesWrapperRenderer(props) : React.createElement('div', props);
-			};
 
+			// wrap values
+			var ValueWrapComponent = this.props.sortableValues ? Sortable : function (p) {
+				return React.createElement('div', p);
+			};
+			var propsWrapComponent = {
+				key: _.uniqueId(),
+				id: this._instancePrefix + '-value',
+				className: 'Select-multi-value-wrapper'
+			};
+			if (this.props.sortableValues) {
+				propsWrapComponent.options = {
+					group: this.props.sortableGroup || null,
+					onAdd: function onAdd(evt) {
+						var newIndex = evt.newIndex,
+						    clone = evt.clone;
+
+						var newValue = JSON.parse(clone.dataset.value);
+						var valueArray = _this9.getValueArray(_this9.props.value);
+						valueArray.splice(newIndex, 0, newValue);
+						_this9.setValue(_.uniqWith([].concat(toConsumableArray(valueArray)), _.isEqual));
+					},
+					onRemove: function onRemove(evt) {
+						var newIndex = evt.newIndex;
+
+						var valueArray = _this9.getValueArray(_this9.props.value);
+						valueArray.splice(newIndex, 1);
+						_this9.setValue(_.uniqWith([].concat(toConsumableArray(valueArray)), _.isEqual));
+					}
+				};
+				propsWrapComponent.onChange = function (order, sortable, evt) {
+					var newIndex = evt.newIndex,
+					    oldIndex = evt.oldIndex,
+					    from = evt.from,
+					    to = evt.to;
+
+					if (from === to) {
+						var _valueArray = _this9.getValueArray(_this9.props.value);
+
+						var _valueArray$splice = _valueArray.splice(oldIndex, 1),
+						    _valueArray$splice2 = slicedToArray(_valueArray$splice, 1),
+						    valueByOldIndex = _valueArray$splice2[0];
+
+						_valueArray.splice(newIndex, 0, valueByOldIndex);
+						_this9.setValue([].concat(toConsumableArray(_valueArray)));
+					}
+				};
+				propsWrapComponent.tag = 'div';
+			}
 			return React.createElement(
 				'div',
 				{ ref: function ref(_ref7) {
@@ -1888,8 +2004,8 @@ var Select$1 = function (_React$Component) {
 						style: this.props.style
 					},
 					React.createElement(
-						ValuesWrapperRenderer,
-						{ className: 'Select-multi-value-wrapper', id: this._instancePrefix + '-value' },
+						ValueWrapComponent,
+						propsWrapComponent,
 						this.renderValue(valueArray, isOpen),
 						this.renderInput(valueArray, focusedOptionIndex)
 					),
@@ -1982,7 +2098,8 @@ Select$1.propTypes = {
 	valueKey: PropTypes.string, // path of the label value in option objects
 	valueRenderer: PropTypes.func, // valueRenderer: function (option) {}
 	wrapperStyle: PropTypes.object, // optional style to apply to the component wrapper
-	valuesWrapperRenderer: PropTypes.func // custom values wrapper component
+	sortableValues: PropTypes.bool,
+	sortableGroup: PropTypes.string
 };
 
 Select$1.defaultProps = {
@@ -2028,7 +2145,9 @@ Select$1.defaultProps = {
 	tabSelectsValue: true,
 	trimFilter: true,
 	valueComponent: Value,
-	valueKey: 'value'
+	valueKey: 'value',
+	sortableValues: false,
+	sortableGroup: ''
 };
 
 var propTypes = {
