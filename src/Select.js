@@ -1188,7 +1188,7 @@ class Select extends React.Component {
 				onRemove: (evt) => {
 					const { oldIndex } = evt;
 					const valueArray = this.getValueArray(this.props.value);
-					valueArray.splice(newIndex, 1);
+					valueArray.splice(oldIndex, 1);
 					this.setValue(_.uniqWith([...valueArray], _.isEqual));
 				}
 			};

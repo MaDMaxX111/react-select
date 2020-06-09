@@ -1956,8 +1956,10 @@ var Select$1 = function (_React$Component) {
 						_this9.setValue(_.uniqWith([].concat(toConsumableArray(valueArray)), _.isEqual));
 					},
 					onRemove: function onRemove(evt) {
+						var oldIndex = evt.oldIndex;
+
 						var valueArray = _this9.getValueArray(_this9.props.value);
-						valueArray.splice(newIndex, 1);
+						valueArray.splice(oldIndex, 1);
 						_this9.setValue(_.uniqWith([].concat(toConsumableArray(valueArray)), _.isEqual));
 					}
 				};
