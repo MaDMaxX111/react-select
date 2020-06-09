@@ -264,8 +264,7 @@ class Select extends React.Component {
 		// button, or if the component is disabled, ignore it.
 		if (
 			this.props.disabled ||
-			(event.type === 'mousedown' && event.button !== 0) ||
-			event.target.closest('.Select-value')) {
+			(event.type === 'mousedown' && event.button !== 0)) {
 			return;
 		}
 

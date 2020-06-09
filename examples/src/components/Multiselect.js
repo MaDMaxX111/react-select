@@ -27,7 +27,7 @@ var MultiSelectField = createClass({
 			disabled: false,
 			crazy: false,
 			stayOpen: false,
-			value: [],
+			value: ['chocolate', 'Strawberry'],
 			rtl: false,
 		};
 	},
