@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { findDOMNode } from 'react-dom';
-import Sortable from 'react-sortablejs';
+import * as Sortable from 'react-sortablejs';
 import _ from 'lodash';
 
 import defaultArrowRenderer from './utils/defaultArrowRenderer';

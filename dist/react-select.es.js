@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
-import Sortable from 'react-sortablejs';
+import * as Sortable from 'react-sortablejs';
 import _ from 'lodash';
 
 var arrowRenderer = function arrowRenderer(_ref) {
@@ -950,7 +950,7 @@ var Select$1 = function (_React$Component) {
 		value: function handleMouseDown(event) {
 			// if the event was triggered by a mousedown and not the primary
 			// button, or if the component is disabled, ignore it.
-			if (this.props.disabled || event.type === 'mousedown' && event.button !== 0 || event.target.closest('.Select-value')) {
+			if (this.props.disabled || event.type === 'mousedown' && event.button !== 0) {
 				return;
 			}
 
