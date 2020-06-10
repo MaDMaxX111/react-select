@@ -7,8 +7,8 @@ import AutosizeInput from 'react-input-autosize';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { findDOMNode } from 'react-dom';
-import * as Sortable from 'react-sortablejs';
+import {findDOMNode} from 'react-dom';
+import Sortable from 'react-sortablejs';
 import _ from 'lodash';
 
 import defaultArrowRenderer from './utils/defaultArrowRenderer';
@@ -264,7 +264,8 @@ class Select extends React.Component {
 		// button, or if the component is disabled, ignore it.
 		if (
 			this.props.disabled ||
-			(event.type === 'mousedown' && event.button !== 0)) {
+			(event.type === 'mousedown' && event.button !== 0) ||
+			event.target.closest('.Select-value')) {
 			return;
 		}
 
@@ -1167,42 +1168,23 @@ class Select extends React.Component {
 			);
 		}
 
-		// wrap values
-		const ValueWrapComponent = this.props.sortableValues ? Sortable : p => <div {...p} />;
-		const propsWrapComponent = {
-			id: `${this._instancePrefix}-value`,
-			className: 'Select-multi-value-wrapper',
-		};
-		if (this.props.sortableValues) {
-			propsWrapComponent.options = {
-				group: this.props.sortableGroup || null,
-				onAdd: (evt) => {
-					const { newIndex, clone } = evt;
-					const newValue = JSON.parse(clone.dataset.value);
-					const valueArray = this.getValueArray(this.props.value);
-					valueArray.splice(newIndex, 0, newValue);
-					this.setValue(_.uniqWith([...valueArray], _.isEqual));
-				},
-				onRemove: (evt) => {
-					const { oldIndex } = evt;
-					const valueArray = this.getValueArray(this.props.value);
-					valueArray.splice(oldIndex, 1);
-					this.setValue(_.uniqWith([...valueArray], _.isEqual));
-				},
-				draggable: '.Select-value',
-				filter: '.Select-input',
-			};
-			propsWrapComponent.onChange = (order, sortable, evt) => {
-				const { newIndex, oldIndex, from, to } = evt;
-				if (from === to) {
-					const valueArray = this.getValueArray(this.props.value);
-					const [valueByOldIndex] = valueArray.splice(oldIndex, 1);
-					valueArray.splice(newIndex, 0, valueByOldIndex);
-					this.setValue([...valueArray]);
-				}
-			};
-			propsWrapComponent.tag = 'div';
-		}
+
+
+		// if (this.props.sortableValues) {
+		// 	propsWrapComponent.onChange = (order, sortable, evt) => {
+		// 		const { newIndex, oldIndex, from, to } = evt;
+		// 		if (from === to) {
+		// 			const valueArray = this.getValueArray(this.props.value);
+		// 			const [valueByOldIndex] = valueArray.splice(oldIndex, 1);
+		// 			valueArray.splice(newIndex, 0, valueByOldIndex);
+		// 			this.setValue([...valueArray]);
+		// 		}
+		// 	};
+		// 	propsWrapComponent.tag = 'div';
+		// }
+
+		// const values = ;
+		// console.log('render')
 		return (
 			<div ref={ref => this.wrapper = ref}
 				 className={className}
@@ -1217,10 +1199,49 @@ class Select extends React.Component {
 					 onTouchStart={this.handleTouchStart}
 					 style={this.props.style}
 				>
-					<ValueWrapComponent {...propsWrapComponent} >
-						{this.renderValue(valueArray, isOpen)}
-						{this.renderInput(valueArray, focusedOptionIndex)}
-					</ValueWrapComponent>
+					{this.props.sortableValues ?
+						<Sortable
+							id={`${this._instancePrefix}-value`}
+							className={'Select-multi-value-wrapper'}
+							tag={'div'}
+							onChange={(order, sortable, evt) => {
+								const {newIndex, oldIndex, from, to} = evt;
+								if (from === to) {
+									const valueArray = this.getValueArray(this.props.value);
+									const [valueByOldIndex] = valueArray.splice(oldIndex, 1);
+									valueArray.splice(newIndex, 0, valueByOldIndex);
+									this.setValue([...valueArray]);
+								}
+							}}
+							options = {{
+								group: this.props.sortableGroup || null,
+								onAdd: (evt) => {
+								const { newIndex, clone } = evt;
+								const newValue = JSON.parse(clone.dataset.value);
+								const valueArray = this.getValueArray(this.props.value);
+								valueArray.splice(newIndex, 0, newValue);
+								this.setValue(_.uniqWith([...valueArray], _.isEqual));
+							},
+								onRemove: (evt) => {
+								const { oldIndex } = evt;
+								const valueArray = this.getValueArray(this.props.value);
+								valueArray.splice(oldIndex, 1);
+								this.setValue(_.uniqWith([...valueArray], _.isEqual));
+							},
+								draggable: '.Select-value',
+								filter: '.Select-input',
+							}}
+						>
+							{this.renderValue(valueArray, isOpen)}
+							{this.renderInput(valueArray, focusedOptionIndex)}
+						</Sortable> :
+						<div
+							id={`${this._instancePrefix}-value`}
+							className={'Select-multi-value-wrapper'}
+						>
+							{this.renderValue(valueArray, isOpen)}
+							{this.renderInput(valueArray, focusedOptionIndex)}
+						</div>}
 					{removeMessage}
 					{this.renderLoading()}
 					{this.renderClear()}

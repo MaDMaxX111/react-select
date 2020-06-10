@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
-import * as Sortable from 'react-sortablejs';
+import Sortable from 'react-sortablejs';
 import _ from 'lodash';
 
 var arrowRenderer = function arrowRenderer(_ref) {
@@ -950,7 +950,7 @@ var Select$1 = function (_React$Component) {
 		value: function handleMouseDown(event) {
 			// if the event was triggered by a mousedown and not the primary
 			// button, or if the component is disabled, ignore it.
-			if (this.props.disabled || event.type === 'mousedown' && event.button !== 0) {
+			if (this.props.disabled || event.type === 'mousedown' && event.button !== 0 || event.target.closest('.Select-value')) {
 				return;
 			}
 
@@ -1934,55 +1934,21 @@ var Select$1 = function (_React$Component) {
 				);
 			}
 
-			// wrap values
-			var ValueWrapComponent = this.props.sortableValues ? Sortable : function (p) {
-				return React.createElement('div', p);
-			};
-			var propsWrapComponent = {
-				id: this._instancePrefix + '-value',
-				className: 'Select-multi-value-wrapper'
-			};
-			if (this.props.sortableValues) {
-				propsWrapComponent.options = {
-					group: this.props.sortableGroup || null,
-					onAdd: function onAdd(evt) {
-						var newIndex = evt.newIndex,
-						    clone = evt.clone;
+			// if (this.props.sortableValues) {
+			// 	propsWrapComponent.onChange = (order, sortable, evt) => {
+			// 		const { newIndex, oldIndex, from, to } = evt;
+			// 		if (from === to) {
+			// 			const valueArray = this.getValueArray(this.props.value);
+			// 			const [valueByOldIndex] = valueArray.splice(oldIndex, 1);
+			// 			valueArray.splice(newIndex, 0, valueByOldIndex);
+			// 			this.setValue([...valueArray]);
+			// 		}
+			// 	};
+			// 	propsWrapComponent.tag = 'div';
+			// }
 
-						var newValue = JSON.parse(clone.dataset.value);
-						var valueArray = _this9.getValueArray(_this9.props.value);
-						valueArray.splice(newIndex, 0, newValue);
-						_this9.setValue(_.uniqWith([].concat(toConsumableArray(valueArray)), _.isEqual));
-					},
-					onRemove: function onRemove(evt) {
-						var oldIndex = evt.oldIndex;
-
-						var valueArray = _this9.getValueArray(_this9.props.value);
-						valueArray.splice(oldIndex, 1);
-						_this9.setValue(_.uniqWith([].concat(toConsumableArray(valueArray)), _.isEqual));
-					},
-					draggable: '.Select-value',
-					filter: '.Select-input'
-				};
-				propsWrapComponent.onChange = function (order, sortable, evt) {
-					var newIndex = evt.newIndex,
-					    oldIndex = evt.oldIndex,
-					    from = evt.from,
-					    to = evt.to;
-
-					if (from === to) {
-						var _valueArray = _this9.getValueArray(_this9.props.value);
-
-						var _valueArray$splice = _valueArray.splice(oldIndex, 1),
-						    _valueArray$splice2 = slicedToArray(_valueArray$splice, 1),
-						    valueByOldIndex = _valueArray$splice2[0];
-
-						_valueArray.splice(newIndex, 0, valueByOldIndex);
-						_this9.setValue([].concat(toConsumableArray(_valueArray)));
-					}
-				};
-				propsWrapComponent.tag = 'div';
-			}
+			// const values = ;
+			// console.log('render')
 			return React.createElement(
 				'div',
 				{ ref: function ref(_ref7) {
@@ -2004,9 +1970,59 @@ var Select$1 = function (_React$Component) {
 						onTouchStart: this.handleTouchStart,
 						style: this.props.style
 					},
-					React.createElement(
-						ValueWrapComponent,
-						propsWrapComponent,
+					this.props.sortableValues ? React.createElement(
+						Sortable,
+						{
+							id: this._instancePrefix + '-value',
+							className: 'Select-multi-value-wrapper',
+							tag: 'div',
+							onChange: function onChange(order, sortable, evt) {
+								var newIndex = evt.newIndex,
+								    oldIndex = evt.oldIndex,
+								    from = evt.from,
+								    to = evt.to;
+
+								if (from === to) {
+									var _valueArray = _this9.getValueArray(_this9.props.value);
+
+									var _valueArray$splice = _valueArray.splice(oldIndex, 1),
+									    _valueArray$splice2 = slicedToArray(_valueArray$splice, 1),
+									    valueByOldIndex = _valueArray$splice2[0];
+
+									_valueArray.splice(newIndex, 0, valueByOldIndex);
+									_this9.setValue([].concat(toConsumableArray(_valueArray)));
+								}
+							},
+							options: {
+								group: this.props.sortableGroup || null,
+								onAdd: function onAdd(evt) {
+									var newIndex = evt.newIndex,
+									    clone = evt.clone;
+
+									var newValue = JSON.parse(clone.dataset.value);
+									var valueArray = _this9.getValueArray(_this9.props.value);
+									valueArray.splice(newIndex, 0, newValue);
+									_this9.setValue(_.uniqWith([].concat(toConsumableArray(valueArray)), _.isEqual));
+								},
+								onRemove: function onRemove(evt) {
+									var oldIndex = evt.oldIndex;
+
+									var valueArray = _this9.getValueArray(_this9.props.value);
+									valueArray.splice(oldIndex, 1);
+									_this9.setValue(_.uniqWith([].concat(toConsumableArray(valueArray)), _.isEqual));
+								},
+								draggable: '.Select-value',
+								filter: '.Select-input'
+							}
+						},
+						this.renderValue(valueArray, isOpen),
+						this.renderInput(valueArray, focusedOptionIndex)
+					) : React.createElement(
+						'div',
+						{
+							id: this._instancePrefix + '-value',
+							className: 'Select-multi-value-wrapper'
+						},
 						this.renderValue(valueArray, isOpen),
 						this.renderInput(valueArray, focusedOptionIndex)
 					),
