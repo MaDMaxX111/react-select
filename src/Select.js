@@ -1228,8 +1228,6 @@ class Select extends React.Component {
 								valueArray.splice(oldIndex, 1);
 								this.setValue(_.uniqWith([...valueArray], _.isEqual));
 							},
-								draggable: '.Select-value',
-								filter: '.Select-input',
 							}}
 						>
 							{this.renderValue(valueArray, isOpen)}

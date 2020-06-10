@@ -2010,9 +2010,7 @@ var Select$1 = function (_React$Component) {
 									var valueArray = _this9.getValueArray(_this9.props.value);
 									valueArray.splice(oldIndex, 1);
 									_this9.setValue(_.uniqWith([].concat(toConsumableArray(valueArray)), _.isEqual));
-								},
-								draggable: '.Select-value',
-								filter: '.Select-input'
+								}
 							}
 						},
 						this.renderValue(valueArray, isOpen),
