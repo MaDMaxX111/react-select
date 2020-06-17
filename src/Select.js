@@ -1168,23 +1168,6 @@ class Select extends React.Component {
 			);
 		}
 
-
-
-		// if (this.props.sortableValues) {
-		// 	propsWrapComponent.onChange = (order, sortable, evt) => {
-		// 		const { newIndex, oldIndex, from, to } = evt;
-		// 		if (from === to) {
-		// 			const valueArray = this.getValueArray(this.props.value);
-		// 			const [valueByOldIndex] = valueArray.splice(oldIndex, 1);
-		// 			valueArray.splice(newIndex, 0, valueByOldIndex);
-		// 			this.setValue([...valueArray]);
-		// 		}
-		// 	};
-		// 	propsWrapComponent.tag = 'div';
-		// }
-
-		// const values = ;
-		// console.log('render')
 		return (
 			<div ref={ref => this.wrapper = ref}
 				 className={className}
@@ -1216,18 +1199,19 @@ class Select extends React.Component {
 							options = {{
 								group: this.props.sortableGroup || null,
 								onAdd: (evt) => {
-								const { newIndex, clone } = evt;
-								const newValue = JSON.parse(clone.dataset.value);
-								const valueArray = this.getValueArray(this.props.value);
-								valueArray.splice(newIndex, 0, newValue);
-								this.setValue(_.uniqWith([...valueArray], _.isEqual));
-							},
+									const { newIndex, clone } = evt;
+									const newValue = JSON.parse(clone.dataset.value);
+									const valueArray = this.getValueArray(this.props.value);
+									valueArray.splice(newIndex, 0, newValue);
+									this.setValue(_.uniqWith([...valueArray], _.isEqual));
+								},
 								onRemove: (evt) => {
-								const { oldIndex } = evt;
-								const valueArray = this.getValueArray(this.props.value);
-								valueArray.splice(oldIndex, 1);
-								this.setValue(_.uniqWith([...valueArray], _.isEqual));
-							},
+									const { oldIndex } = evt;
+									const valueArray = this.getValueArray(this.props.value);
+									valueArray.splice(oldIndex, 1);
+									this.setValue(_.uniqWith([...valueArray], _.isEqual));
+								},
+								forceFallback: true,
 							}}
 						>
 							{this.renderValue(valueArray, isOpen)}

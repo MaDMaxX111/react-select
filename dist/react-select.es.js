@@ -1934,21 +1934,6 @@ var Select$1 = function (_React$Component) {
 				);
 			}
 
-			// if (this.props.sortableValues) {
-			// 	propsWrapComponent.onChange = (order, sortable, evt) => {
-			// 		const { newIndex, oldIndex, from, to } = evt;
-			// 		if (from === to) {
-			// 			const valueArray = this.getValueArray(this.props.value);
-			// 			const [valueByOldIndex] = valueArray.splice(oldIndex, 1);
-			// 			valueArray.splice(newIndex, 0, valueByOldIndex);
-			// 			this.setValue([...valueArray]);
-			// 		}
-			// 	};
-			// 	propsWrapComponent.tag = 'div';
-			// }
-
-			// const values = ;
-			// console.log('render')
 			return React.createElement(
 				'div',
 				{ ref: function ref(_ref7) {
@@ -2010,7 +1995,8 @@ var Select$1 = function (_React$Component) {
 									var valueArray = _this9.getValueArray(_this9.props.value);
 									valueArray.splice(oldIndex, 1);
 									_this9.setValue(_.uniqWith([].concat(toConsumableArray(valueArray)), _.isEqual));
-								}
+								},
+								forceFallback: true
 							}
 						},
 						this.renderValue(valueArray, isOpen),
